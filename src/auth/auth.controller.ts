@@ -82,9 +82,9 @@ export class AuthController {
 				const token = this.getUserToken(user);
 
 				await this.mail.sendMail({
-					from: `'Glasshour' <${process.env.EMAIL_USER}>`,
+					from: `'Bespoke' <${process.env.EMAIL_USER}>`,
 					to: magicLinkDto.email,
-					subject: "Glasshour Sign In Link",
+					subject: "Bespoke Sign In Link",
 					html: getEmailBody(user.name, token),
 				});
 			}
