@@ -82,9 +82,9 @@ export class AuthController {
 				const token = this.getUserToken(user);
 
 				await this.mail.sendMail({
-					from: `'Bespoke' <${process.env.EMAIL_USER}>`,
+					from: `'Ewan from Fontastik' <${process.env.EMAIL_USER}>`,
 					to: magicLinkDto.email,
-					subject: "Bespoke Sign In Link",
+					subject: "Fontastik Sign In Link",
 					html: getEmailBody(user.name, token),
 				});
 			}
