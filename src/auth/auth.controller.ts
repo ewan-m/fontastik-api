@@ -9,54 +9,36 @@ import {
 	UnauthorizedException,
 	UseGuards,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { pbkdf2Sync, randomBytes } from "crypto";
 import { decode, sign } from "jsonwebtoken";
 import { HasValidTokenGuard } from "../guards/has-valid-token.guard";
-import { Repository } from "typeorm";
 import { MagicLinkDto } from "./dto/magic-link.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 import { SignUpDto } from "./dto/sign-up.dto";
 import { getEmailBody } from "./helpers/get-email-body";
 import { TokenPayload } from "./token-payload.type";
-import { User } from "./user.entity";
-
-const allFields: (keyof User)[] = [
-	"id",
-	"email",
-	"isActive",
-	"name",
-	"passwordHash",
-	"passwordSalt",
-];
+import { UserRepository } from "./db/user.repository";
+import { User } from "./db/user.entity";
 
 @Controller()
 export class AuthController {
 	constructor(
 		private readonly mail: MailerService,
-		@InjectRepository(User)
-		private readonly userRepository: Repository<User>
+		private readonly userRepository: UserRepository
 	) {}
 
 	@Post("/sign-in")
 	@HttpCode(200)
 	async signIn(@Body() signInDto: SignInDto) {
 		try {
-			const user = await this.userRepository.findOneOrFail(
-				{
-					email: signInDto.email,
-				},
-				{
-					select: allFields,
-				}
-			);
+			const user = await this.userRepository.getUserByEmail(signInDto.email);
 
 			const isPasswordCorrect =
 				this.getPasswordHash(signInDto.password, user.passwordSalt) ===
 				user.passwordHash;
 
-			if (isPasswordCorrect && user.isActive) {
+			if (isPasswordCorrect && !user.isBlocked) {
 				return {
 					token: this.getUserToken(user),
 				};
@@ -74,9 +56,7 @@ export class AuthController {
 	@HttpCode(200)
 	async sendMagicEmailLink(@Body() magicLinkDto: MagicLinkDto) {
 		try {
-			const user = await this.userRepository.findOne({
-				email: magicLinkDto.email,
-			});
+			const user = await this.userRepository.getUserByEmail(magicLinkDto.email);
 
 			if (user) {
 				const token = this.getUserToken(user);
@@ -107,16 +87,15 @@ export class AuthController {
 		if (token) {
 			try {
 				const userId = (decode(token) as TokenPayload).id;
-				const user = await this.userRepository.findOneOrFail(userId, {
-					select: allFields,
-				});
+
+				const user = {userId} as User;
 				const passwordSalt = this.getSalt();
 				user.passwordSalt = passwordSalt;
 				user.passwordHash = this.getPasswordHash(
 					resetPasswordDto.password,
 					passwordSalt
 				);
-				await this.userRepository.save(user);
+				await this.userRepository.updatePassword(user);
 
 				return {};
 			} catch (error) {}
@@ -139,7 +118,7 @@ export class AuthController {
 		user.email = signUpDto.email;
 		user.name = signUpDto.name;
 
-		await this.userRepository.save(user);
+		await this.userRepository.createUser(user);
 
 		return { token: this.getUserToken(user) };
 	}
@@ -149,7 +128,7 @@ export class AuthController {
 			{
 				email: user.email,
 				name: user.name,
-				id: user.id,
+				id: user.userId,
 			} as TokenPayload,
 			process.env.JWT_SECRET,
 			{ expiresIn: "1d" }
