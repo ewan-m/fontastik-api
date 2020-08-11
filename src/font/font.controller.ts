@@ -37,7 +37,7 @@ export class FontController {
 		}
 
 		throw new InternalServerErrorException([
-			"Something went wrong updating your password",
+			"Something went wrong saving your font",
 		]);
 	}
 }
