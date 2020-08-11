@@ -45,10 +45,10 @@ WHERE post_id = $1 AND user_id = $2;
 	public async getNewPosts() {
 		return this.db.query(
 			`
-SELECT post.post_id, post.content, post.created, font.font_ttf, user.name, user.profile_picture_url
+SELECT post.post_id, post.content, post.created, font.font_ttf, user_identity.name, user_identity.profile_picture_url
 FROM post 
 JOIN font ON post.font_id = font.font_id 
-JOIN user ON post.user_id = user.user_id
+JOIN user_identity ON post.user_id = user_identity.user_id
 ORDER BY post.created ASC
 LIMIT 20;
 			`

@@ -12,7 +12,7 @@ export class UserRepository {
 			await this.db.query<User>(
 				`
 SELECT name, password_hash, password_salt, is_blocked
-FROM user
+FROM user_identity
 WHERE email = $1;
 		`,
 				[email]
@@ -24,7 +24,7 @@ WHERE email = $1;
 		const { userId, passwordHash, passwordSalt } = user;
 		return await this.db.query(
 			`
-UPDATE user
+UPDATE user_identity
 SET password_hash = $1, password_salt = $2
 WHERE user_id = $3;
 `,
@@ -36,7 +36,7 @@ WHERE user_id = $3;
 		const { name, email, passwordHash, passwordSalt } = user;
 		return await this.db.query(
 			`
-INSERT INTO user (name, email, password_hash, password_salt)
+INSERT INTO user_identity (name, email, password_hash, password_salt)
 VALUES ($1, $2, $3, $4);`,
 			[name, email, passwordHash, passwordSalt]
 		);
