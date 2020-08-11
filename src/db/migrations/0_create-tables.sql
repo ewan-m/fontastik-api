@@ -1,38 +1,39 @@
-CREATE TABLE user {
-    userId SERIAL PRIMARY KEY,
+CREATE TABLE user (
+    user_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    passwordHash TEXT NOT NULL,
-    passwordSalt TEXT NOT NULL,
-    isBlocked BOOLEAN NOT NULL DEFAULT 'false',
-    profilePictureUrl TEXT,
-};
+    password_hash TEXT NOT NULL,
+    password_salt TEXT NOT NULL,
+    is_blocked BOOLEAN NOT NULL DEFAULT 'false',
+    profile_picture_url TEXT
+);
 
-CREATE TABLE font {
-    fontId SERIAL PRIMARY KEY,
-    userId SERIAL REFERENCES user_identity(userId),
-    fontTtf BYTEA,
-    fontCharacters JSONB,
-};
+CREATE TABLE font (
+    font_id SERIAL PRIMARY KEY,
+    user_id SERIAL REFERENCES user(user_id),
+    font_ttf BYTEA,
+    font_characters JSONB
+);
 
-CREATE TABLE post {
-    postId SERIAL PRIMARY KEY,
-    userId SERIAL REFERENCES user_identity(userId),
-    fontId SERIAL REFERENCES font(fontId),
+CREATE TABLE post (
+    post_id SERIAL PRIMARY KEY,
+    user_id SERIAL REFERENCES user(user_id),
+    font_id SERIAL REFERENCES font(font_id),
     content TEXT,
     created TIMESTAMP with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
     location POINT
-};
+);
 
-CREATE TABLE postLike {
-    postLikesId SERIAL PRIMARY KEY,
-    postId SERIAL REFERENCES post(postId),
-    userId SERIAL REFERENCES user(userId)
-};
+CREATE TABLE post_like (
+    post_like_id SERIAL PRIMARY KEY,
+    post_id SERIAL REFERENCES post(post_id),
+    user_id SERIAL REFERENCES user(user_id)
+);
 
-CREATE TABLE offenseReport {
-    offenseReportId SERIAL PRIMARY KEY,
-    reportType TEXT,
-    postOrUserId SERIAL,  
-    created timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
-}
+CREATE TABLE offense_report (
+    user_id: SERIAL REFERENCES user(user_id),
+    offense_report_id SERIAL PRIMARY KEY,
+    report_type TEXT,
+    post_or_user_id SERIAL,  
+    created timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now())
+);

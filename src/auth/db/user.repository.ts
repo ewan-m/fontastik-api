@@ -11,7 +11,7 @@ export class UserRepository {
 		return (
 			await this.db.query<User>(
 				`
-SELECT name, passwordHash, passwordSalt, isBlocked
+SELECT name, password_hash, password_salt, is_blocked
 FROM user
 WHERE email = $1;
 		`,
@@ -25,8 +25,8 @@ WHERE email = $1;
 		return await this.db.query(
 			`
 UPDATE user
-SET passwordHash = $1, passwordSalt = $2
-WHERE userId = $3;
+SET password_hash = $1, password_salt = $2
+WHERE user_id = $3;
 `,
 			[passwordHash, passwordSalt, userId]
 		);

@@ -15,13 +15,13 @@ export class FontRepository {
 BEGIN
 	LOOP
 		UPDATE font
-			SET fontTtf = $1, fontCharacters = $2
-			WHERE userId = $3;
+			SET font_ttf = $1, font_characters = $2
+			WHERE user_id = $3;
 		IF found THEN
 			RETURN;
 		END IF;
 		BEGIN
-			INSERT INTO font (userId, fontTtf, fontCharacters)
+			INSERT INTO font (user_id, font_ttf, font_characters)
 				VALUES ($3, $1, $2);
 			RETURN;
 		END;
