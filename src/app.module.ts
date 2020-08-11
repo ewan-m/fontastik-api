@@ -1,7 +1,6 @@
 import { MailerModule } from "@nestjs-modules/mailer";
 import { Module } from "@nestjs/common";
 import { AuthController } from "./auth/auth.controller";
-import { IsUniqueEmailConstraint } from "./auth/validators/is-unique-email.validator";
 import { HasValidTokenGuard } from "./guards/has-valid-token.guard";
 import { TokenIdMatchesRequestedIdGuard } from "./guards/token-id-matches-requested-id.guard";
 import { FontController } from "./font/font.controller";
@@ -25,7 +24,6 @@ import { UserRepository } from "./auth/db/user.repository";
 	providers: [
 		HasValidTokenGuard,
 		TokenIdMatchesRequestedIdGuard,
-		IsUniqueEmailConstraint,
 		PostRepository,
 		FontRepository,
 		UserRepository,
