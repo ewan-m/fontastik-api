@@ -31,8 +31,8 @@ CREATE TABLE post_like (
 );
 
 CREATE TABLE offense_report (
-    user_id: SERIAL REFERENCES user_identity(user_id),
     offense_report_id SERIAL PRIMARY KEY,
+    user_id SERIAL REFERENCES user_identity(user_id),
     report_type TEXT,
     post_or_user_id SERIAL,  
     created timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now())
