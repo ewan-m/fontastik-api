@@ -10,7 +10,7 @@ export function getEmailBody(name: string, token: string) {
     To sign in to your account simply use the following magic link to be automatically signed in. It would be a good idea to then change your password once you've signed in.
 </p>
 <p>
-    <a href="${process.env.APPLICATION_URL}/sign-in?token=${token}">Sign in to Fontastik</a>
+    <a href="${process.env.APPLICATION_URL}/account/log-in?token=${token}">Sign in to Fontastik</a>
 </p>
 <p>
 Ewan - Fontastik ❤️

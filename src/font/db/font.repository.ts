@@ -12,21 +12,10 @@ export class FontRepository {
 
 		return await this.db.query(
 			`
-BEGIN
-	LOOP
-		UPDATE font
-			SET font_ttf = $1, font_characters = $2
-			WHERE user_id = $3;
-		IF found THEN
-			RETURN;
-		END IF;
-		BEGIN
-			INSERT INTO font (user_id, font_ttf, font_characters)
-				VALUES ($3, $1, $2);
-			RETURN;
-		END;
-	END LOOP;
-END;`,
+INSERT INTO font (user_id, font_ttf, font_characters) VALUES ($3, $1, $2)
+ON CONFLICT (user_id)
+DO UPDATE SET font_ttf = $1, font_characters = $2 WHERE font.user_id = $3;
+`,
 			[fontTtf, fontCharacters, userId]
 		);
 	}

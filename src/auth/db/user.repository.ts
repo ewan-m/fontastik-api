@@ -21,24 +21,25 @@ WHERE email = $1;
 	}
 
 	public async updatePassword(user: User) {
-		const { userId, passwordHash, passwordSalt } = user;
+		const { user_id, password_hash, password_salt } = user;
 		return await this.db.query(
 			`
 UPDATE user_identity
 SET password_hash = $1, password_salt = $2
 WHERE user_id = $3;
 `,
-			[passwordHash, passwordSalt, userId]
+			[password_hash, password_salt, user_id]
 		);
 	}
 
 	public async createUser(user: User) {
-		const { name, email, passwordHash, passwordSalt } = user;
+		const { name, email, password_hash, password_salt } = user;
 		return await this.db.query(
 			`
 INSERT INTO user_identity (name, email, password_hash, password_salt)
-VALUES ($1, $2, $3, $4);`,
-			[name, email, passwordHash, passwordSalt]
+VALUES ($1, $2, $3, $4)
+RETURNING user_id;`,
+			[name, email, password_hash, password_salt]
 		);
 	}
 }

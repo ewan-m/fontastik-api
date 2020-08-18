@@ -26,14 +26,12 @@ export class FontController {
 		const token = authHeader.split(" ")?.[1];
 
 		if (token) {
-			try {
 				const userId = (decode(token) as TokenPayload).id;
 
 				const font = { userId, ...saveFontDto } as Font;
 				await this.fontRepository.saveFont(font);
 
 				return {};
-			} catch (error) {}
 		}
 
 		throw new InternalServerErrorException([

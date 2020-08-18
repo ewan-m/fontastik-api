@@ -10,7 +10,7 @@ CREATE TABLE user_identity (
 
 CREATE TABLE font (
     font_id SERIAL PRIMARY KEY,
-    user_id SERIAL REFERENCES user_identity(user_id),
+    user_id SERIAL REFERENCES user_identity(user_id) UNIQUE,
     font_ttf BYTEA,
     font_characters JSONB
 );

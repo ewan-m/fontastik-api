@@ -35,10 +35,10 @@ export class AuthController {
 			const user = await this.userRepository.getUserByEmail(signInDto.email);
 
 			const isPasswordCorrect =
-				this.getPasswordHash(signInDto.password, user.passwordSalt) ===
-				user.passwordHash;
+				this.getPasswordHash(signInDto.password, user.password_salt) ===
+				user.password_hash;
 
-			if (isPasswordCorrect && !user.isBlocked) {
+			if (isPasswordCorrect && !user.is_blocked) {
 				return {
 					token: this.getUserToken(user),
 				};
@@ -62,7 +62,7 @@ export class AuthController {
 				const token = this.getUserToken(user);
 
 				await this.mail.sendMail({
-					from: `'Ewan from Fontastik' <${process.env.EMAIL_USER}>`,
+					from: `Ewan from Fontastik <${process.env.EMAIL_USER}>`,
 					to: magicLinkDto.email,
 					subject: "Fontastik Sign In Link",
 					html: getEmailBody(user.name, token),
@@ -90,8 +90,8 @@ export class AuthController {
 
 				const user = { userId } as User;
 				const passwordSalt = this.getSalt();
-				user.passwordSalt = passwordSalt;
-				user.passwordHash = this.getPasswordHash(
+				user.password_salt = passwordSalt;
+				user.password_hash = this.getPasswordHash(
 					resetPasswordDto.password,
 					passwordSalt
 				);
@@ -113,13 +113,13 @@ export class AuthController {
 		const passwordSalt = this.getSalt();
 		const passwordHash = this.getPasswordHash(signUpDto.password, passwordSalt);
 
-		user.passwordHash = passwordHash;
-		user.passwordSalt = passwordSalt;
+		user.password_hash = passwordHash;
+		user.password_salt = passwordSalt;
 		user.email = signUpDto.email;
 		user.name = signUpDto.name;
 
 		const query = await this.userRepository.createUser(user);
-		user.userId = query["user_id"];
+		user.user_id = query?.rows?.[0]?.["user_id"];
 
 		return { token: this.getUserToken(user) };
 	}
@@ -129,7 +129,7 @@ export class AuthController {
 			{
 				email: user.email,
 				name: user.name,
-				id: user.userId,
+				id: user.user_id,
 			} as TokenPayload,
 			process.env.JWT_SECRET,
 			{ expiresIn: "1d" }

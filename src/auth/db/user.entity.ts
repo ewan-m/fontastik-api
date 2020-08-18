@@ -1,9 +1,9 @@
 export class User {
-	userId?: number;
+	user_id?: number;
 	name?: string;
 	email?: string;
-	passwordHash?: string;
-	passwordSalt?: string;
-	isBlocked?: boolean;
-	profilePictureUrl?: string;
+	password_hash?: string;
+	password_salt?: string;
+	is_blocked?: boolean;
+	profile_picture_url?: string;
 }
