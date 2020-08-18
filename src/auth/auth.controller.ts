@@ -118,7 +118,8 @@ export class AuthController {
 		user.email = signUpDto.email;
 		user.name = signUpDto.name;
 
-		await this.userRepository.createUser(user);
+		const query = await this.userRepository.createUser(user);
+		user.userId = query["user_id"];
 
 		return { token: this.getUserToken(user) };
 	}

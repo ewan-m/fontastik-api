@@ -1,7 +1,7 @@
 import { IsJSON, IsDataURI } from "class-validator";
 
 export class SaveFontDto {
-	@IsDataURI()
+	@IsJSON()
 	fontTtf: Uint8Array;
 
 	@IsJSON()
