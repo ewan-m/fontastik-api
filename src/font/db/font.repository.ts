@@ -7,16 +7,36 @@ import { PG_CONNECTION } from "../../db/database.module";
 export class FontRepository {
 	constructor(@Inject(PG_CONNECTION) private readonly db: Pool) {}
 
-	public async saveFont(font: Font) {
-		const { fontTtf, fontCharacters, userId } = font;
+	public async saveProgress(font: Font) {
+		const { font_characters, user_id } = font;
 
 		return await this.db.query(
 			`
-INSERT INTO font (user_id, font_ttf, font_characters) VALUES ($3, $1, $2)
+INSERT INTO font (user_id, font_characters) VALUES ($1, $2)
 ON CONFLICT (user_id)
-DO UPDATE SET font_ttf = $1, font_characters = $2 WHERE font.user_id = $3;
+DO UPDATE SET font_characters = $2 WHERE font.user_id = $1;
 `,
-			[fontTtf, fontCharacters, userId]
+			[user_id, font_characters]
+		);
+	}
+
+	public async hasUserSavedFont(userId: number) {
+		const result = await this.db.query(
+			"SELECT has_saved_font FROM font WHERE user_id = $1",
+			[userId]
+		);
+
+		return result;
+	}
+
+	public async markFontAsSaved(userId: number) {
+		return await this.db.query(
+			`
+INSERT INTO font (user_id, has_saved_font) VALUES ($1, $2)
+ON CONFLICT (user_id)
+DO UPDATE SET has_saved_font = $2 WHERE font.user_id = $1;
+			`,
+			[userId, true]
 		);
 	}
 }

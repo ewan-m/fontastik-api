@@ -8,17 +8,14 @@ export class PostRepository {
 	constructor(@Inject(PG_CONNECTION) private readonly db: Pool) {}
 
 	public async savePost(post: Post) {
-		const { userId, content, location } = post;
+		const { user_id, content, location } = post;
 
 		return await this.db.query(
 			`
-WITH matching_font_id AS (
-	SELECT font_id FROM font WHERE user_id = $1;
-);
-INSERT INTO post (user_id, font_id, content, location)
-VALUES ($1, matching_font_id, $2, point($3, $4));
+INSERT INTO post (user_id, content, location)
+VALUES ($1, $2, point($3, $4));
             `,
-			[userId, content, location.x, location.y]
+			[user_id, content, location.x, location.y]
 		);
 	}
 
@@ -45,9 +42,8 @@ WHERE post_id = $1 AND user_id = $2;
 	public async getNewPosts() {
 		return this.db.query(
 			`
-SELECT post.post_id, post.content, post.created, font.font_ttf, user_identity.name, user_identity.profile_picture_url
-FROM post 
-JOIN font ON post.font_id = font.font_id 
+SELECT post.post_id, post.content, post.created, user_identity.name, user_identity.profile_picture_url
+FROM post
 JOIN user_identity ON post.user_id = user_identity.user_id
 ORDER BY post.created ASC
 LIMIT 20;

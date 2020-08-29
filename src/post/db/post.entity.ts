@@ -1,7 +1,6 @@
 export interface Post {
-	postId?: number;
-	userId?: number;
-	fontId?: number;
+	post_id?: number;
+	user_id?: number;
 	content?: string;
 	created?: Date;
 	location?: { x: number; y: number };

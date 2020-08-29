@@ -1,6 +1,6 @@
 export interface Font {
-	fontId?: number;
-	userId?: number;
-	fontTtf?: Uint8Array;
-	fontCharacters?: object;
+	font_id?: number;
+	user_id?: number;
+	font_characters?: object;
+	has_saved_font?: boolean;
 }
