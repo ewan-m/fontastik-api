@@ -86,9 +86,9 @@ export class AuthController {
 
 		if (token) {
 			try {
-				const userId = (decode(token) as TokenPayload).id;
+				const user_id = (decode(token) as TokenPayload).id;
 
-				const user = { userId } as User;
+				const user = { user_id } as User;
 				const passwordSalt = this.getSalt();
 				user.password_salt = passwordSalt;
 				user.password_hash = this.getPasswordHash(

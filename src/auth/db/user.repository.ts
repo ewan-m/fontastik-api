@@ -11,7 +11,7 @@ export class UserRepository {
 		return (
 			await this.db.query<User>(
 				`
-SELECT name, password_hash, password_salt, is_blocked
+SELECT user_id, email, name, password_hash, password_salt, is_blocked
 FROM user_identity
 WHERE email = $1;
 		`,
