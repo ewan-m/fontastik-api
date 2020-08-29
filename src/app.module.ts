@@ -1,5 +1,5 @@
 import { MailerModule } from "@nestjs-modules/mailer";
-import { Module } from "@nestjs/common";
+import { Module, HttpModule } from "@nestjs/common";
 import { AuthController } from "./auth/auth.controller";
 import { HasValidTokenGuard } from "./guards/has-valid-token.guard";
 import { TokenIdMatchesRequestedIdGuard } from "./guards/token-id-matches-requested-id.guard";
@@ -9,9 +9,11 @@ import { PostRepository } from "./post/db/post.repository";
 import { FontRepository } from "./font/db/font.repository";
 import { DatabaseModule } from "./db/database.module";
 import { UserRepository } from "./auth/db/user.repository";
+import { GithubService } from "./services/github.service";
 
 @Module({
 	imports: [
+		HttpModule,
 		DatabaseModule,
 		MailerModule.forRoot({
 			transport: {
@@ -27,6 +29,7 @@ import { UserRepository } from "./auth/db/user.repository";
 		PostRepository,
 		FontRepository,
 		UserRepository,
+		GithubService,
 	],
 })
 export class AppModule {}
