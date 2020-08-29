@@ -11,14 +11,13 @@ CREATE TABLE user_identity (
 CREATE TABLE font (
     font_id SERIAL PRIMARY KEY,
     user_id SERIAL REFERENCES user_identity(user_id) UNIQUE,
-    font_ttf BYTEA,
+    has_saved_font BOOLEAN NOT NULL default 'false',
     font_characters JSONB
 );
 
 CREATE TABLE post (
     post_id SERIAL PRIMARY KEY,
     user_id SERIAL REFERENCES user_identity(user_id),
-    font_id SERIAL REFERENCES font(font_id),
     content TEXT,
     created TIMESTAMP with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
     location POINT
@@ -30,10 +29,10 @@ CREATE TABLE post_like (
     user_id SERIAL REFERENCES user_identity(user_id)
 );
 
-CREATE TABLE offense_report (
-    offense_report_id SERIAL PRIMARY KEY,
-    user_id SERIAL REFERENCES user_identity(user_id),
-    report_type TEXT,
-    post_or_user_id SERIAL,  
-    created timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now())
-);
+-- CREATE TABLE offense_report (
+--     offense_report_id SERIAL PRIMARY KEY,
+--     user_id SERIAL REFERENCES user_identity(user_id),
+--     report_type TEXT,
+--     post_or_user_id SERIAL,  
+--     created timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now())
+-- );
