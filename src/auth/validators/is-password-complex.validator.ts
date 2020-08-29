@@ -10,14 +10,7 @@ import {
 export class IsPasswordComplexConstraint
 	implements ValidatorConstraintInterface {
 	validate(password: string, args: ValidationArguments) {
-		return (
-			password &&
-			password.match(/(?=.*[0-9])/) &&
-			password.match(/(?=.*[A-Z])/) &&
-			password.match(/(?=.*[a-z])/) &&
-			password.match(/([^a-zA-Z0-9])/) &&
-			password.length >= 8
-		);
+		return password && password.length >= 8;
 	}
 }
 
@@ -27,7 +20,7 @@ export function IsPasswordComplex(validationOptions?: ValidationOptions) {
 			target: object.constructor,
 			propertyName: propertyName,
 			options: {
-				message: `${propertyName} must contain letters (lowercase and uppercase), number(s), special character(s) and be at least 8 characters long.`,
+				message: `${propertyName} must be at least 8 characters long.`,
 				...validationOptions,
 			},
 			constraints: [],
