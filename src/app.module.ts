@@ -10,6 +10,7 @@ import { FontRepository } from "./font/db/font.repository";
 import { DatabaseModule } from "./db/database.module";
 import { UserRepository } from "./auth/db/user.repository";
 import { GithubService } from "./services/github.service";
+import { TokenParserService } from "./services/token-parser.service";
 
 @Module({
 	imports: [
@@ -30,6 +31,7 @@ import { GithubService } from "./services/github.service";
 		FontRepository,
 		UserRepository,
 		GithubService,
+		TokenParserService,
 	],
 })
 export class AppModule {}
