@@ -6,20 +6,22 @@ import {
 	Headers,
 	InternalServerErrorException,
 	BadGatewayException,
+	Get,
+	HttpCode,
 } from "@nestjs/common";
-import { decode } from "jsonwebtoken";
 import { FontRepository } from "./db/font.repository";
 import { HasValidTokenGuard } from "../guards/has-valid-token.guard";
 import { SaveFontCharactersDto } from "./dto/save-font-characters.dto";
-import { TokenPayload } from "../auth/token-payload.type";
 import { SaveFontDataDto } from "./dto/save-font-data.dto";
-import { GithubService } from "src/services/github.service";
+import { GithubService } from "../services/github.service";
+import { TokenParserService } from "../services/token-parser.service";
 
 @Controller()
 export class FontController {
 	constructor(
 		private readonly fontRepository: FontRepository,
-		private readonly github: GithubService
+		private readonly github: GithubService,
+		private readonly tokenParser: TokenParserService
 	) {}
 
 	@Post("font-data")
@@ -28,29 +30,37 @@ export class FontController {
 		@Body() saveFontDataDto: SaveFontDataDto,
 		@Headers("authorization") authHeader: string
 	) {
-		const token = authHeader.split(" ")?.[1];
+		const userId = this.tokenParser.getUserId(authHeader);
 
-		if (token) {
-			const userId = (decode(token) as TokenPayload).id;
+		const res = await this.github.postFile(
+			`UserFont-${userId}.css`,
+			this.buildFontCssFile(saveFontDataDto.fontData, userId),
+			`Add font style for user with id ${userId}`
+		);
 
-			const res = await this.github.postFile(
-				`UserFont-${userId}.css`,
-				this.buildFontCssFile(saveFontDataDto.fontData, userId),
-				`Add font style for user with id ${userId}`
-			);
-
-			if (res.status >= 400) {
-				throw new BadGatewayException(["Something went wrong saving your font"]);
-			} else {
+		if (res.status >= 400) {
+			throw new BadGatewayException(["Something went wrong saving your font"]);
+		} else {
+			try {
 				await this.fontRepository.markFontAsSaved(userId);
+				return {};
+			} catch (error) {
+				throw new InternalServerErrorException([
+					"Something went wrong saving your font",
+				]);
 			}
-
-			return {};
 		}
+	}
 
-		throw new InternalServerErrorException([
-			"Something went wrong saving your font",
-		]);
+	@Get("has-saved-font")
+	@HttpCode(200)
+	@UseGuards(HasValidTokenGuard)
+	public async hasSavedFont(@Headers("authorization") authHeader: string) {
+		const userId = this.tokenParser.getUserId(authHeader);
+
+		const result = await this.fontRepository.hasUserSavedFont(userId);
+
+		return { hasSavedFont: result };
 	}
 
 	@Post("font-characters")
@@ -59,22 +69,20 @@ export class FontController {
 		@Body() saveFontDto: SaveFontCharactersDto,
 		@Headers("authorization") authHeader: string
 	) {
-		const token = authHeader.split(" ")?.[1];
+		const user_id = this.tokenParser.getUserId(authHeader);
 
-		if (token) {
-			const user_id = (decode(token) as TokenPayload).id;
-
+		try {
 			await this.fontRepository.saveProgress({
 				user_id,
 				font_characters: saveFontDto.fontCharacters,
 			});
 
 			return {};
+		} catch (error) {
+			throw new InternalServerErrorException([
+				"Something went wrong saving your font",
+			]);
 		}
-
-		throw new InternalServerErrorException([
-			"Something went wrong saving your font",
-		]);
 	}
 
 	private buildFontCssFile(fontData: any, userId: number): string {

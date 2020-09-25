@@ -24,7 +24,7 @@ DO UPDATE SET font_characters = $2 WHERE font.user_id = $1;`,
 			[userId]
 		);
 
-		return result.rows;
+		return !!result.rows?.[0];
 	}
 
 	public async markFontAsSaved(userId: number) {
