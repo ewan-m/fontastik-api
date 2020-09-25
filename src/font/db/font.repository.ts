@@ -11,11 +11,9 @@ export class FontRepository {
 		const { font_characters, user_id } = font;
 
 		return await this.db.query(
-			`
-INSERT INTO font (user_id, font_characters) VALUES ($1, $2)
+			`INSERT INTO font (user_id, font_characters) VALUES ($1, $2)
 ON CONFLICT (user_id)
-DO UPDATE SET font_characters = $2 WHERE font.user_id = $1;
-`,
+DO UPDATE SET font_characters = $2 WHERE font.user_id = $1;`,
 			[user_id, font_characters]
 		);
 	}
@@ -26,16 +24,14 @@ DO UPDATE SET font_characters = $2 WHERE font.user_id = $1;
 			[userId]
 		);
 
-		return result;
+		return result.rows;
 	}
 
 	public async markFontAsSaved(userId: number) {
 		return await this.db.query(
-			`
-INSERT INTO font (user_id, has_saved_font) VALUES ($1, $2)
+			`INSERT INTO font (user_id, has_saved_font) VALUES ($1, $2)
 ON CONFLICT (user_id)
-DO UPDATE SET has_saved_font = $2 WHERE font.user_id = $1;
-			`,
+DO UPDATE SET has_saved_font = $2 WHERE font.user_id = $1;`,
 			[userId, true]
 		);
 	}
