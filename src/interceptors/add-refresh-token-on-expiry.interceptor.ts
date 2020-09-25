@@ -5,9 +5,9 @@ import {
 	NestInterceptor,
 } from "@nestjs/common";
 import { decode, sign } from "jsonwebtoken";
-import moment from "moment";
 import { map } from "rxjs/operators";
 import { TokenPayload } from "../auth/token-payload.type";
+import { parseISO, differenceInMinutes } from "date-fns";
 
 @Injectable()
 export class AddRefreshTokenOnExpiryInterceptor implements NestInterceptor {
@@ -19,8 +19,8 @@ export class AddRefreshTokenOnExpiryInterceptor implements NestInterceptor {
 
 				if (authToken) {
 					const decodedToken = decode(authToken);
-					const expiryDate = moment(decodedToken?.["exp"]);
-					if (expiryDate.isValid() && moment().diff(expiryDate, "minutes") < 60) {
+					const date = parseISO(decodedToken?.["exp"]);
+					if (date && differenceInMinutes(date, new Date()) < 60) {
 						context
 							.switchToHttp()
 							.getResponse()
