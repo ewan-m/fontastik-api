@@ -37,12 +37,12 @@ export class PostController {
 		@Body() createPostDto: CreatePostDto,
 		@Headers("authorization") authHeader: string
 	) {
-		const userId = this.tokenParser.getUserId(authHeader);
-		const hasFont = await this.fontRepository.hasUserSavedFont(userId);
+		const user_id = this.tokenParser.getUserId(authHeader);
+		const hasFont = await this.fontRepository.hasUserSavedFont(user_id);
 
 		if (hasFont) {
 			try {
-				const post = { userId } as PostEntity;
+				const post = { user_id } as PostEntity;
 				post.location = { x: createPostDto.latitude, y: createPostDto.longitude };
 				post.content = createPostDto.content;
 				return this.postRepository.savePost(post);

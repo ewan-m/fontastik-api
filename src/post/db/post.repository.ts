@@ -5,7 +5,7 @@ import { PG_CONNECTION } from "../../db/database.module";
 
 @Injectable()
 export class PostRepository {
-	private readonly selectPosts = `SELECT post.post_id, post.content, post.created, user_identity.name, user_identity.profile_picture_url
+	private readonly selectPosts = `SELECT post.post_id, post.content, post.created, user_identity.name, user_identity.user_id
 FROM post
 JOIN user_identity ON post.user_id = user_identity.user_id`;
 
