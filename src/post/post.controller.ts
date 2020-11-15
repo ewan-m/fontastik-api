@@ -33,9 +33,19 @@ export class PostController {
 	) {
 		const user_id = this.tokenParser.getUserId(authHeader);
 
-		return postReactionDto.isLike
-			? this.postRepository.likePost(postReactionDto.postId, user_id)
-			: this.postRepository.unlikePost(postReactionDto.postId, user_id);
+		postReactionDto.isLike
+			? await this.postRepository.likePost(postReactionDto.postId, user_id)
+			: await this.postRepository.unlikePost(postReactionDto.postId, user_id);
+
+		return postReactionDto;
+	}
+
+	@Get("post-likes")
+	@UseGuards(HasValidTokenGuard)
+	async getPostLikes(@Headers("authorization") authHeader: string) {
+		const userId = this.tokenParser.getUserId(authHeader);
+
+		return await this.postRepository.getPostLikes(userId);
 	}
 
 	@Post("post")
