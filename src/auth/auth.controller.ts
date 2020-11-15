@@ -20,6 +20,8 @@ import { getEmailBody } from "./helpers/get-email-body";
 import { TokenPayload } from "./token-payload.type";
 import { UserRepository } from "./db/user.repository";
 import { User } from "./db/user.entity";
+import { ChangeEmailDto } from "./dto/change-email.dto";
+import { ChangeNameDto } from "./dto/change-name.dto";
 
 @Controller()
 export class AuthController {
@@ -74,6 +76,54 @@ export class AuthController {
 			message:
 				"If a matching account was found then an email with a sign in link will be sent to your inbox.",
 		};
+	}
+
+	@Post("/change-email")
+	@UseGuards(HasValidTokenGuard)
+	async changeEmail(
+		@Body() changeEmailDto: ChangeEmailDto,
+		@Headers("authorization") authHeader: string
+	) {
+		const token = authHeader.split(" ")?.[1];
+
+		if (token) {
+			try {
+				const user_id = (decode(token) as TokenPayload).id;
+
+				const user = { user_id, ...changeEmailDto } as User;
+				await this.userRepository.updateEmail(user);
+
+				return {};
+			} catch (error) {}
+		}
+
+		throw new InternalServerErrorException([
+			"Something went wrong updating your email",
+		]);
+	}
+
+	@Post("/change-name")
+	@UseGuards(HasValidTokenGuard)
+	async changeName(
+		@Body() changeNameDto: ChangeNameDto,
+		@Headers("authorization") authHeader: string
+	) {
+		const token = authHeader.split(" ")?.[1];
+
+		if (token) {
+			try {
+				const user_id = (decode(token) as TokenPayload).id;
+
+				const user = { user_id, ...changeNameDto } as User;
+				await this.userRepository.updateName(user);
+
+				return {};
+			} catch (error) {}
+		}
+
+		throw new InternalServerErrorException([
+			"Something went wrong updating your name",
+		]);
 	}
 
 	@Post("/reset-password")

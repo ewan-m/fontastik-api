@@ -28,6 +28,26 @@ WHERE user_id = $3;`,
 		);
 	}
 
+	public async updateEmail(user: User) {
+		const { user_id, email } = user;
+		return await this.db.query(
+			`UPDATE user_identity
+SET email = $1
+WHERE user_id = $2;`,
+			[email, user_id]
+		);
+	}
+
+	public async updateName(user: User) {
+		const { user_id, name } = user;
+		return await this.db.query(
+			`UPDATE user_identity
+SET name = $1
+WHERE user_id = $2;`,
+			[name, user_id]
+		);
+	}
+
 	public async createUser(user: User) {
 		const { name, email, password_hash, password_salt } = user;
 		return await this.db.query(

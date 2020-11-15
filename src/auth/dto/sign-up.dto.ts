@@ -1,9 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, MaxLength } from "class-validator";
 import { IsPasswordComplex } from "../validators/is-password-complex.validator";
 
 export class SignUpDto {
 	@IsNotEmpty()
 	@IsString()
+	@MaxLength(100)
 	name: string;
 
 	@IsNotEmpty()
