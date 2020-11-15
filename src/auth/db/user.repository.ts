@@ -70,12 +70,12 @@ RETURNING user_id;`,
 	}
 
 	public async deleteUser(userId: number) {
-		return await this.db.query(
-			`DELETE FROM font WHERE user_id = $1;
-DELETE FROM post_like WHERE user_id = $1;
-DELETE FROM post WHERE user_id = $1;
-DELETE FROM user_identity WHERE user_id = $1;`,
-			[userId]
-		);
+		await this.db.query(`DELETE FROM font WHERE user_id = $1`, [userId]);
+		await this.db.query(`DELETE FROM post_like WHERE user_id = $1`, [userId]);
+		await this.db.query(`DELETE FROM post WHERE user_id = $1`, [userId]);
+
+		return await this.db.query(`DELETE FROM user_identity WHERE user_id = $1;`, [
+			userId,
+		]);
 	}
 }
