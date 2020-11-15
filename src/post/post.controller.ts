@@ -15,6 +15,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { Post as PostEntity } from "./db/post.entity";
 import { FontRepository } from "../font/db/font.repository";
 import { TokenParserService } from "../services/token-parser.service";
+import { PostReactionDto } from "./dto/post-reaction.dto";
 
 @Controller()
 export class PostController {
@@ -24,11 +25,17 @@ export class PostController {
 		private readonly tokenParser: TokenParserService
 	) {}
 
-	@Get("posts-for-user")
+	@Post("react-to-post")
 	@UseGuards(HasValidTokenGuard)
-	async getPostsForUser(@Headers("authorization") authHeader: string) {
-		const userId = this.tokenParser.getUserId(authHeader);
-		return await this.postRepository.getPostsForUser(userId);
+	async reactToPost(
+		@Body() postReactionDto: PostReactionDto,
+		@Headers("authorization") authHeader: string
+	) {
+		const user_id = this.tokenParser.getUserId(authHeader);
+
+		return postReactionDto.isLike
+			? this.postRepository.likePost(postReactionDto.postId, user_id)
+			: this.postRepository.unlikePost(postReactionDto.postId, user_id);
 	}
 
 	@Post("post")
@@ -43,7 +50,7 @@ export class PostController {
 		if (hasFont) {
 			try {
 				const post = { user_id } as PostEntity;
-				post.location = { x: createPostDto.latitude, y: createPostDto.longitude };
+				post.location = { x: createPostDto.x, y: createPostDto.y };
 				post.content = createPostDto.content;
 				return this.postRepository.savePost(post);
 			} catch (error) {
@@ -59,11 +66,26 @@ export class PostController {
 	}
 
 	@Get("posts")
-	async getPosts(@Query("type") type) {
+	async getPosts(
+		@Query("type") type,
+		@Query("x") latitude,
+		@Query("y") longitude
+	) {
 		switch (type) {
+			case "popular":
+				return await this.postRepository.getPopularPosts();
+			case "local":
+				return await this.postRepository.getLocalPosts(latitude, longitude);
 			case "new":
 			default:
 				return await this.postRepository.getNewPosts();
 		}
+	}
+
+	@Get("posts-for-user")
+	@UseGuards(HasValidTokenGuard)
+	async getPostsForUser(@Headers("authorization") authHeader: string) {
+		const userId = this.tokenParser.getUserId(authHeader);
+		return await this.postRepository.getPostsForUser(userId);
 	}
 }

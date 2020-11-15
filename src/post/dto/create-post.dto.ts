@@ -17,11 +17,11 @@ export class CreatePostDto {
 	@IsNumber({ maxDecimalPlaces: 2 })
 	@Max(90)
 	@Min(-90)
-	latitude: number;
+	x: number;
 
 	@IsNotEmpty()
 	@IsNumber({ maxDecimalPlaces: 2 })
 	@Max(180)
 	@Min(-180)
-	longitude: number;
+	y: number;
 }
