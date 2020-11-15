@@ -2,6 +2,7 @@ import { MailerService } from "@nestjs-modules/mailer";
 import {
 	Body,
 	Controller,
+	Delete,
 	Headers,
 	HttpCode,
 	InternalServerErrorException,
@@ -92,8 +93,8 @@ export class AuthController {
 
 				const user = { user_id, ...changeEmailDto } as User;
 				await this.userRepository.updateEmail(user);
-
-				return {};
+				const refreshedUser = await this.userRepository.getUserById(user_id);
+				return { token: this.getUserToken(refreshedUser) };
 			} catch (error) {}
 		}
 
@@ -117,7 +118,8 @@ export class AuthController {
 				const user = { user_id, ...changeNameDto } as User;
 				await this.userRepository.updateName(user);
 
-				return {};
+				const refreshedUser = await this.userRepository.getUserById(user_id);
+				return { token: this.getUserToken(refreshedUser) };
 			} catch (error) {}
 		}
 
@@ -172,6 +174,15 @@ export class AuthController {
 		user.user_id = query?.rows?.[0]?.["user_id"];
 
 		return { token: this.getUserToken(user) };
+	}
+
+	@Delete("/account")
+	@UseGuards(HasValidTokenGuard)
+	async deleteAccount(@Headers("authorization") authHeader: string) {
+		const token = authHeader.split(" ")?.[1];
+
+		const userId = (decode(token) as TokenPayload).id;
+		return this.userRepository.deleteUser(userId);
 	}
 
 	private getUserToken(user: User) {

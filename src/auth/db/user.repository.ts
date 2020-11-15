@@ -18,6 +18,17 @@ WHERE email = $1;`,
 		).rows[0];
 	}
 
+	public async getUserById(userId: number): Promise<User> {
+		return (
+			await this.db.query<User>(
+				`SELECT user_id, email, name, password_hash, password_salt, is_blocked
+FROM user_identity
+WHERE user_id = $1;`,
+				[userId]
+			)
+		).rows[0];
+	}
+
 	public async updatePassword(user: User) {
 		const { user_id, password_hash, password_salt } = user;
 		return await this.db.query(
@@ -55,6 +66,16 @@ WHERE user_id = $2;`,
 VALUES ($1, $2, $3, $4)
 RETURNING user_id;`,
 			[name, email, password_hash, password_salt]
+		);
+	}
+
+	public async deleteUser(userId: number) {
+		return await this.db.query(
+			`DELETE FROM font WHERE user_id = $1;
+DELETE FROM post_like WHERE user_id = $1;
+DELETE FROM post WHERE user_id = $1;
+DELETE FROM user_identity WHERE user_id = $1;`,
+			[userId]
 		);
 	}
 }
