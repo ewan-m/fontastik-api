@@ -12,7 +12,7 @@ export class UserRepository {
 			await this.db.query<User>(
 				`SELECT user_id, email, name, password_hash, password_salt, is_blocked
 FROM user_identity
-WHERE email = $1;`,
+WHERE LOWER(email) = LOWER($1);`,
 				[email]
 			)
 		).rows[0];
