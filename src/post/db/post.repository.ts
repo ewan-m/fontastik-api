@@ -69,7 +69,7 @@ LIMIT 20;`
 FROM post
 JOIN user_identity ON post.user_id = user_identity.user_id
 WHERE post.location != point(0,0)
-ORDER BY distance DESC
+ORDER BY distance ASC
 LIMIT 20;`,
 				[x, y]
 			)

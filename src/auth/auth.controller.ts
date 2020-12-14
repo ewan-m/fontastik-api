@@ -183,7 +183,7 @@ export class AuthController {
 
 		const userId = (decode(token) as TokenPayload).id;
 		await this.userRepository.deleteUser(userId);
-		return {userId}
+		return { userId };
 	}
 
 	private getUserToken(user: User) {
