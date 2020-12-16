@@ -36,6 +36,18 @@ $ npm install
 
 ## Running the app
 
+A '.env' file is required at root with the following variables.
+```
+APPLICATION_URL=http://localhost:1234
+ENABLE_SWAGGER=true
+JWT_SECRET=***
+EMAIL_USER=noreply.ewanm@gmail.com
+EMAIL_PASSWORD=***
+DATABASE_URL=postgres://postgres:***@localhost:5432/fontastik
+GITHUB_TOKEN=***
+GITHUB_BRANCH=test
+```
+
 ```bash
 # development
 $ npm run start
