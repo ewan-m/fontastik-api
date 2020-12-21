@@ -8,6 +8,7 @@ import {
 	Get,
 	Query,
 	BadRequestException,
+	Param,
 } from "@nestjs/common";
 import { HasValidTokenGuard } from "../guards/has-valid-token.guard";
 import { PostRepository } from "./db/post.repository";
@@ -92,10 +93,15 @@ export class PostController {
 		}
 	}
 
-	@Get("posts-for-user")
+	@Get("user/:userId/posts")
 	@UseGuards(HasValidTokenGuard)
-	async getPostsForUser(@Headers("authorization") authHeader: string) {
-		const userId = this.tokenParser.getUserId(authHeader);
-		return await this.postRepository.getPostsForUser(userId);
+	async getPostsForUser(@Param("userId") userId: string) {
+		if (/^\d+$/.test(userId)) {
+			return await this.postRepository.getPostsForUser(parseInt(userId));
+		} else {
+			throw new BadRequestException([
+				"The userId route parameter should be an integer.",
+			]);
+		}
 	}
 }
