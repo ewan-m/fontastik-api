@@ -80,24 +80,28 @@ export class PostController {
 	async getPosts(
 		@Query("type") type,
 		@Query("x") latitude,
-		@Query("y") longitude
+		@Query("y") longitude,
+		@Query("offset") offset
 	) {
 		switch (type) {
 			case "popular":
-				return await this.postRepository.getPopularPosts();
+				return await this.postRepository.getPopularPosts(offset);
 			case "local":
-				return await this.postRepository.getLocalPosts(latitude, longitude);
+				return await this.postRepository.getLocalPosts(latitude, longitude, offset);
 			case "new":
 			default:
-				return await this.postRepository.getNewPosts();
+				return await this.postRepository.getNewPosts(offset);
 		}
 	}
 
 	@Get("user/:userId/posts")
 	@UseGuards(HasValidTokenGuard)
-	async getPostsForUser(@Param("userId") userId: string) {
+	async getPostsForUser(
+		@Param("userId") userId: string,
+		@Query("offset") offset
+	) {
 		if (/^\d+$/.test(userId)) {
-			return await this.postRepository.getPostsForUser(parseInt(userId));
+			return await this.postRepository.getPostsForUser(parseInt(userId), offset);
 		} else {
 			throw new BadRequestException([
 				"The userId route parameter should be an integer.",

@@ -51,17 +51,18 @@ WHERE post_id = $1 AND user_id = $2;`,
 		).rows;
 	}
 
-	public async getNewPosts() {
+	public async getNewPosts(offset: number) {
 		return (
 			await this.db.query(
 				`${this.selectPosts}
 ORDER BY post.created DESC
-LIMIT 20;`
+OFFSET $1 LIMIT 20;`,
+				[offset]
 			)
 		).rows;
 	}
 
-	public async getLocalPosts(x: number, y: number) {
+	public async getLocalPosts(x: number, y: number, offset: number) {
 		return (
 			await this.db.query(
 				`${this.mainSelect} post.location <@> point($1,$2) as distance,
@@ -70,30 +71,31 @@ FROM post
 JOIN user_identity ON post.user_id = user_identity.user_id
 WHERE post.location != point(0,0)
 ORDER BY distance ASC
-LIMIT 20;`,
-				[x, y]
+OFFSET $3 LIMIT 20;`,
+				[x, y, offset]
 			)
 		).rows;
 	}
 
-	public async getPopularPosts() {
+	public async getPopularPosts(offset: number) {
 		return (
 			await this.db.query(
 				`${this.selectPosts}
 ORDER BY post_likes DESC
-LIMIT 20;`
+OFFSET $1 LIMIT 20;`,
+				[offset]
 			)
 		).rows;
 	}
 
-	public async getPostsForUser(userId: number) {
+	public async getPostsForUser(userId: number, offset: number) {
 		return (
 			await this.db.query(
 				`${this.selectPosts}
 WHERE post.user_id = $1
 ORDER BY post.created DESC
-LIMIT 20;`,
-				[userId]
+OFFSET $2 LIMIT 20;`,
+				[userId, offset]
 			)
 		).rows;
 	}
