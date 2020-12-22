@@ -95,7 +95,6 @@ export class PostController {
 	}
 
 	@Get("user/:userId/posts")
-	@UseGuards(HasValidTokenGuard)
 	async getPostsForUser(
 		@Param("userId") userId: string,
 		@Query("offset") offset
