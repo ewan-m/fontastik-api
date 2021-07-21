@@ -13,7 +13,7 @@ export class UserRepository {
 				`SELECT user_id, email, name, password_hash, password_salt, is_blocked
 FROM user_identity
 WHERE LOWER(email) = LOWER($1);`,
-				[email]
+				[email.toLowerCase()]
 			)
 		).rows[0];
 	}
@@ -45,7 +45,7 @@ WHERE user_id = $3;`,
 			`UPDATE user_identity
 SET email = $1
 WHERE user_id = $2;`,
-			[email, user_id]
+			[email.toLowerCase(), user_id]
 		);
 	}
 
@@ -65,7 +65,7 @@ WHERE user_id = $2;`,
 			`INSERT INTO user_identity (name, email, password_hash, password_salt)
 VALUES ($1, $2, $3, $4)
 RETURNING user_id;`,
-			[name, email, password_hash, password_salt]
+			[name, email.toLowerCase(), password_hash, password_salt]
 		);
 	}
 
