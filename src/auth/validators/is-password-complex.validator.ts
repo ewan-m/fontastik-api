@@ -8,7 +8,8 @@ import {
 
 @ValidatorConstraint()
 export class IsPasswordComplexConstraint
-	implements ValidatorConstraintInterface {
+	implements ValidatorConstraintInterface
+{
 	validate(password: string, args: ValidationArguments) {
 		return password && password.length >= 8;
 	}

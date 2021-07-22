@@ -1,5 +1,6 @@
 import { MailerModule } from "@nestjs-modules/mailer";
-import { Module, HttpModule } from "@nestjs/common";
+import { HttpModule } from "@nestjs/axios";
+import { Module } from "@nestjs/common";
 import { AuthController } from "./auth/auth.controller";
 import { HasValidTokenGuard } from "./guards/has-valid-token.guard";
 import { TokenIdMatchesRequestedIdGuard } from "./guards/token-id-matches-requested-id.guard";

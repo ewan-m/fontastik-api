@@ -7,7 +7,7 @@ const dbProvider = {
 	provide: PG_CONNECTION,
 	useValue: new Pool({
 		connectionString: process.env.DATABASE_URL,
-		ssl: { rejectUnauthorized: false }
+		ssl: { rejectUnauthorized: false },
 	}),
 };
 
