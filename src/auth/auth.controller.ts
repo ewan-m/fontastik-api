@@ -18,9 +18,9 @@ import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 import { SignUpDto } from "./dto/sign-up.dto";
 import { getEmailBody } from "./helpers/get-email-body";
-import { TokenPayload } from "./token-payload.type";
+import type { TokenPayload } from "./token-payload.type";
 import { UserRepository } from "./db/user.repository";
-import { User } from "./db/user.entity";
+import type { User } from "./db/user.entity";
 import { ChangeEmailDto } from "./dto/change-email.dto";
 import { ChangeNameDto } from "./dto/change-name.dto";
 

@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { decode, sign } from "jsonwebtoken";
 import { map } from "rxjs/operators";
-import { TokenPayload } from "../auth/token-payload.type";
+import type { TokenPayload } from "../auth/token-payload.type";
 import { parseISO, differenceInMinutes } from "date-fns";
 
 @Injectable()

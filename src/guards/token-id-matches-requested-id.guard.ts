@@ -5,7 +5,7 @@ import {
 	ForbiddenException,
 } from "@nestjs/common";
 import { decode } from "jsonwebtoken";
-import { TokenPayload } from "../auth/token-payload.type";
+import type { TokenPayload } from "../auth/token-payload.type";
 
 @Injectable()
 export class TokenIdMatchesRequestedIdGuard implements CanActivate {

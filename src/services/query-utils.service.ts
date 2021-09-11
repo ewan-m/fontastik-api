@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { PostLike } from "../post/db/post-like.entity";
-import { User } from "../auth/db/user.entity";
-import { Post } from "../post/db/post.entity";
+import type { PostLike } from "../post/db/post-like.entity";
+import type { User } from "../auth/db/user.entity";
+import type { Post } from "../post/db/post.entity";
 
 type Entity = {
 	user_identity: User;

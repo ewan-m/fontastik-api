@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { Pool } from "pg";
-import { User } from "./user.entity";
+import type { User } from "./user.entity";
 import { PG_CONNECTION } from "../../db/database.module";
 import { QueryUtilsService } from "../../services/query-utils.service";
 

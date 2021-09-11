@@ -13,7 +13,7 @@ import {
 import { HasValidTokenGuard } from "../guards/has-valid-token.guard";
 import { PostRepository } from "./db/post.repository";
 import { CreatePostDto } from "./dto/create-post.dto";
-import { Post as PostEntity } from "./db/post.entity";
+import type { Post as PostEntity } from "./db/post.entity";
 import { TokenParserService } from "../services/token-parser.service";
 import { PostReactionDto } from "./dto/post-reaction.dto";
 import { UserRepository } from "../auth/db/user.repository";
