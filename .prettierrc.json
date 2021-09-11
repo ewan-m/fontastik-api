@@ -1,0 +1,12 @@
+{
+	"tabWidth": 1,
+	"useTabs": true,
+	"overrides": [
+		{
+			"files": "*.ts",
+			"options": {
+				"parser": "typescript"
+			}
+		}
+	]
+}
