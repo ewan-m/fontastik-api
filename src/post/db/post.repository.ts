@@ -10,8 +10,7 @@ export class PostRepository {
 	private readonly likesSelect =
 		"(SELECT COUNT(post_like) FROM post_like WHERE post_like.post_id = post.post_id) as post_likes";
 
-	private readonly selectPosts = `${this.mainSelect}
-	${this.likesSelect}
+	private readonly selectPosts = `${this.mainSelect} ${this.likesSelect}
 FROM post
 JOIN user_identity ON post.user_id = user_identity.user_id`;
 
@@ -41,8 +40,7 @@ OFFSET $1 LIMIT 20;`,
 	public async getLocalPosts(x: number, y: number, offset: number) {
 		return (
 			await this.db.query(
-				`${this.mainSelect} post.location <@> point($1,$2) as distance,
-				${this.likesSelect}
+				`${this.mainSelect} post.location <@> point($1,$2) as distance, ${this.likesSelect}
 FROM post
 JOIN user_identity ON post.user_id = user_identity.user_id
 WHERE post.location != point(0,0)
