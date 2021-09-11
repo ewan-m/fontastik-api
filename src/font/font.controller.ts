@@ -9,17 +9,16 @@ import {
 	Get,
 	HttpCode,
 } from "@nestjs/common";
-import { FontRepository } from "./db/font.repository";
 import { HasValidTokenGuard } from "../guards/has-valid-token.guard";
-import { SaveFontCharactersDto } from "./dto/save-font-characters.dto";
 import { SaveFontDataDto } from "./dto/save-font-data.dto";
 import { GithubService } from "../services/github.service";
 import { TokenParserService } from "../services/token-parser.service";
+import { UserRepository } from "../auth/db/user.repository";
 
 @Controller()
 export class FontController {
 	constructor(
-		private readonly fontRepository: FontRepository,
+		private readonly userRepository: UserRepository,
 		private readonly github: GithubService,
 		private readonly tokenParser: TokenParserService
 	) {}
@@ -42,7 +41,7 @@ export class FontController {
 			throw new BadGatewayException(["Something went wrong saving your font"]);
 		} else {
 			try {
-				await this.fontRepository.markFontAsSaved(userId);
+				await this.userRepository.markFontAsSaved(userId);
 				return {};
 			} catch (error) {
 				throw new InternalServerErrorException([
@@ -58,31 +57,9 @@ export class FontController {
 	public async hasSavedFont(@Headers("authorization") authHeader: string) {
 		const userId = this.tokenParser.getUserId(authHeader);
 
-		const result = await this.fontRepository.hasUserSavedFont(userId);
+		const result = await this.userRepository.hasUserSavedFont(userId);
 
 		return { hasSavedFont: result };
-	}
-
-	@Post("font-characters")
-	@UseGuards(HasValidTokenGuard)
-	public async saveFont(
-		@Body() saveFontDto: SaveFontCharactersDto,
-		@Headers("authorization") authHeader: string
-	) {
-		const user_id = this.tokenParser.getUserId(authHeader);
-
-		try {
-			await this.fontRepository.saveProgress({
-				user_id,
-				font_characters: saveFontDto.fontCharacters,
-			});
-
-			return {};
-		} catch (error) {
-			throw new InternalServerErrorException([
-				"Something went wrong saving your font",
-			]);
-		}
 	}
 
 	private buildFontCssFile(fontData: any, userId: number): string {

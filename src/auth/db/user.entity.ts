@@ -1,4 +1,4 @@
-export class User {
+export type User = {
 	user_id?: number;
 	name?: string;
 	email?: string;
@@ -6,4 +6,5 @@ export class User {
 	password_salt?: string;
 	is_blocked?: boolean;
 	profile_picture_url?: string;
-}
+	has_saved_font?: boolean;
+};

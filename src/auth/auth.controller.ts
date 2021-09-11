@@ -160,15 +160,15 @@ export class AuthController {
 
 	@Post("/sign-up")
 	async signUp(@Body() signUpDto: SignUpDto) {
-		const user = new User();
+		const { email, name, password } = signUpDto;
+		const salt = this.getSalt();
 
-		const passwordSalt = this.getSalt();
-		const passwordHash = this.getPasswordHash(signUpDto.password, passwordSalt);
-
-		user.password_hash = passwordHash;
-		user.password_salt = passwordSalt;
-		user.email = signUpDto.email;
-		user.name = signUpDto.name;
+		const user = {
+			email,
+			name,
+			password_salt: salt,
+			password_hash: this.getPasswordHash(password, salt),
+		} as User;
 
 		const query = await this.userRepository.createUser(user);
 		user.user_id = query?.rows?.[0]?.["user_id"];
