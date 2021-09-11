@@ -27,30 +27,6 @@ VALUES ($1, $2, point($3, $4));`,
 		);
 	}
 
-	public async likePost(postId, userId) {
-		return await this.db.query(
-			`INSERT INTO post_like (post_id, user_id)
-VALUES ($1, $2);`,
-			[postId, userId]
-		);
-	}
-
-	public async unlikePost(postId: number, userId) {
-		return await this.db.query(
-			`DELETE FROM post_like
-WHERE post_id = $1 AND user_id = $2;`,
-			[postId, userId]
-		);
-	}
-
-	public async getPostLikes(userId: number) {
-		return (
-			await this.db.query("SELECT post_id FROM post_like WHERE user_id = $1", [
-				userId,
-			])
-		).rows;
-	}
-
 	public async getNewPosts(offset: number) {
 		return (
 			await this.db.query(

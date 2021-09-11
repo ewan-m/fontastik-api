@@ -7,11 +7,12 @@ import { TokenIdMatchesRequestedIdGuard } from "./guards/token-id-matches-reques
 import { FontController } from "./font/font.controller";
 import { PostController } from "./post/post.controller";
 import { PostRepository } from "./post/db/post.repository";
-import { FontRepository } from "./font/db/font.repository";
 import { DatabaseModule } from "./db/database.module";
 import { UserRepository } from "./auth/db/user.repository";
 import { GithubService } from "./services/github.service";
 import { TokenParserService } from "./services/token-parser.service";
+import { PostLikeRepository } from "./post/db/post-like.repository";
+import { QueryUtilsService } from "./services/query-utils.service";
 
 @Module({
 	imports: [
@@ -29,10 +30,11 @@ import { TokenParserService } from "./services/token-parser.service";
 		HasValidTokenGuard,
 		TokenIdMatchesRequestedIdGuard,
 		PostRepository,
-		FontRepository,
+		PostLikeRepository,
 		UserRepository,
 		GithubService,
 		TokenParserService,
+		QueryUtilsService,
 	],
 })
 export class AppModule {}
