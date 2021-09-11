@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
-import { TokenPayload } from "src/auth/token-payload.type";
+import { TokenPayload } from "../auth/token-payload.type";
 import { decode } from "jsonwebtoken";
 
 @Injectable()
